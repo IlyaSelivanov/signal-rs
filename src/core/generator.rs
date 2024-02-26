@@ -263,3 +263,73 @@ impl Iterator for Sawtooth {
         Some((t * self.freq).fract())
     }
 }
+
+/// A struct representing a square wave generator.
+///
+/// # Example
+///
+/// ```
+/// use assert_approx_eq::assert_approx_eq;
+/// use signal::core::generator::Square;
+/// use signal::core::generator::BufferWriter;
+///
+/// let mut signal = Square::new(2.0, 8);
+/// let mut buffer = vec![0.0; 10];
+/// signal.write_buffer(buffer.as_mut_slice());
+///
+/// assert_approx_eq!(buffer[0], 0.0, 1e-5f32);
+/// assert_approx_eq!(buffer[1], 0.0, 1e-5f32);
+/// assert_approx_eq!(buffer[2], 1.0, 1e-5f32);
+/// assert_approx_eq!(buffer[3], 1.0, 1e-5f32);
+/// ```
+pub struct Square {
+    step_pos: usize,
+    freq: f32,
+    sample_rate: usize,
+}
+
+impl Square {
+    /// Creates a new `Square` generator with the specified frequency and sample rate.
+    ///
+    /// # Arguments
+    ///
+    /// * `freq` - The frequency of the square wave.
+    /// * `sample_rate` - The sample rate of the generator.
+    ///
+    /// # Returns
+    ///
+    /// A new `Square` generator.
+    pub fn new(freq: f32, sample_rate: usize) -> Square {
+        Square {
+            step_pos: 0,
+            freq,
+            sample_rate,
+        }
+    }
+}
+
+impl BufferWriter for Square {}
+
+impl Iterator for Square {
+    type Item = f32;
+
+    /// Generates the next sample of the square wave.
+    ///
+    /// # Returns
+    ///
+    /// The next sample of the square wave as an `Option<f32>`.
+    fn next(&mut self) -> Option<f32> {
+        let t = self.step_pos as f32 / self.sample_rate as f32;
+
+        self.step_pos += 1;
+        if self.step_pos >= self.sample_rate {
+            self.step_pos = 0;
+        }
+
+        if (t * self.freq).fract() < 0.5 {
+            Some(0.0)
+        } else {
+            Some(1.0)
+        }
+    }
+}
