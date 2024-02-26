@@ -81,6 +81,61 @@ impl Iterator for Impulse {
     }
 }
 
+/// A struct representing a step generator.
+///
+/// # Example
+///
+/// ```
+/// use signal::core::generator::Step;
+/// use signal::core::generator::BufferWriter;
+///
+/// let mut signal = Step::new(1);
+/// let mut buffer = vec![0.0; 3];
+/// signal.write_buffer(buffer.as_mut_slice());
+///
+/// assert_eq!(buffer, vec![0.0, 1.0, 1.0]);
+/// ```
+pub struct Step {
+    step_pos: usize,
+}
+
+impl Step {
+    /// Creates a new `Step` generator with the specified step position.
+    ///
+    /// # Arguments
+    ///
+    /// * `step_pos` - The position of the step.
+    ///
+    /// # Returns
+    ///
+    /// A new `Step` generator.
+    pub fn new(step_pos: usize) -> Step {
+        Step { step_pos }
+    }
+}
+
+impl BufferWriter for Step {}
+
+impl Iterator for Step {
+    type Item = f32;
+
+    /// Generates the next sample of the step.
+    ///
+    /// # Returns
+    ///
+    /// The next sample of the step as an `Option<f32>`.
+    fn next(&mut self) -> Option<f32> {
+        let sample = if self.step_pos > 0 {
+            self.step_pos -= 1;
+            0.0
+        } else {
+            1.0
+        };
+
+        Some(sample)
+    }
+}
+
 /// A struct representing a sine wave generator.
 ///
 /// # Example
