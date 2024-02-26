@@ -196,3 +196,70 @@ impl Iterator for Sine {
         Some((t * self.freq * 2.0 * std::f32::consts::PI).sin())
     }
 }
+
+/// A struct representing a square wave generator.
+///
+/// # Example
+///
+/// ```
+/// use assert_approx_eq::assert_approx_eq;
+/// use signal::core::generator::Sawtooth;
+/// use signal::core::generator::BufferWriter;
+///
+/// let mut signal = Sawtooth::new(4.0, 16);
+/// let mut buffer = vec![0.0; 16];
+/// signal.write_buffer(buffer.as_mut_slice());
+///
+/// assert_approx_eq!(buffer[0], 0.0, 1e-5f32);
+/// assert_approx_eq!(buffer[1], 0.25, 1e-5f32);
+/// assert_approx_eq!(buffer[2], 0.5, 1e-5f32);
+/// assert_approx_eq!(buffer[3], 0.75, 1e-5f32);
+/// assert_approx_eq!(buffer[4], 0.0, 1e-5f32);
+/// ```
+pub struct Sawtooth {
+    step_pos: usize,
+    freq: f32,
+    sample_rate: usize,
+}
+
+impl Sawtooth {
+    /// Creates a new `Sawtooth` generator with the specified frequency and sample rate.
+    ///
+    /// # Arguments
+    ///
+    /// * `freq` - The frequency of the sawtooth wave.
+    /// * `sample_rate` - The sample rate of the generator.
+    ///
+    /// # Returns
+    ///
+    /// A new `Sawtooth` generator.
+    pub fn new(freq: f32, sample_rate: usize) -> Sawtooth {
+        Sawtooth {
+            step_pos: 0,
+            freq,
+            sample_rate,
+        }
+    }
+}
+
+impl BufferWriter for Sawtooth {}
+
+impl Iterator for Sawtooth {
+    type Item = f32;
+
+    /// Generates the next sample of the sawtooth wave.
+    ///
+    /// # Returns
+    ///
+    /// The next sample of the sawtooth wave as an `Option<f32>`.
+    fn next(&mut self) -> Option<f32> {
+        let t = self.step_pos as f32 / self.sample_rate as f32;
+
+        self.step_pos += 1;
+        if self.step_pos >= self.sample_rate {
+            self.step_pos = 0;
+        }
+
+        Some((t * self.freq).fract())
+    }
+}
