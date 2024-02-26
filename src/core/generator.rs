@@ -30,11 +30,12 @@ pub trait BufferWriter: Iterator {
 ///
 /// ```
 /// use signal::core::generator::Impulse;
+/// use signal::core::generator::BufferWriter;
 ///
 /// let mut signal = Impulse::new();
 /// let mut buffer = vec![0.0; 3];
-///
 /// signal.write_buffer(buffer.as_mut_slice());
+///
 /// assert_eq!(buffer, vec![1.0, 0.0, 0.0]);
 /// ```
 pub struct Impulse {
@@ -85,12 +86,18 @@ impl Iterator for Impulse {
 /// # Example
 ///
 /// ```
+/// use assert_approx_eq::assert_approx_eq;
 /// use signal::core::generator::Sine;
+/// use signal::core::generator::BufferWriter;
 ///
-/// let mut signal = Sine::new(1.0, 512);
-/// let mut buffer = vec![0.0; 512];
-///
+/// let mut signal = Sine::new(2.0, 8);
+/// let mut buffer = vec![0.0; 10];
 /// signal.write_buffer(buffer.as_mut_slice());
+///
+/// assert_approx_eq!(buffer[0], 0.0, 1e-5f32);
+/// assert_approx_eq!(buffer[1], 1.0, 1e-5f32);
+/// assert_approx_eq!(buffer[2], 0.0, 1e-5f32);
+/// assert_approx_eq!(buffer[3], -1.0, 1e-5f32);
 /// ```
 pub struct Sine {
     step_pos: usize,

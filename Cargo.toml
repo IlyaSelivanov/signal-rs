@@ -9,4 +9,5 @@ edition = "2021"
 
 [dev-dependencies]
 gnuplot = "0.0.42"
+assert_approx_eq = "1.1"
 
