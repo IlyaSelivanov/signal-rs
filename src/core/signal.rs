@@ -23,8 +23,8 @@ impl<T> Signal<T> {
     /// # Returns
     ///
     /// The data of the signal.
-    pub fn data(&self) -> &Vec<T> {
-        &self.data
+    pub fn data(&self) -> &[T] {
+        self.data.as_slice()
     }
 }
 
@@ -52,7 +52,7 @@ where
     ///
     /// let c = a + b;
     ///
-    /// assert_eq!(c.data().as_slice(), &[5, 7, 3]);
+    /// assert_eq!(c.data(), &[5, 7, 3]);
     /// ```
     fn add(self, rhs: Self) -> Self::Output {
         let len = usize::max(self.data.len(), rhs.data.len());
