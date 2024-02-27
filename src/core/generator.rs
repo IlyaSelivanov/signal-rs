@@ -1,3 +1,5 @@
+// Module: generator
+
 /// A trait for writing to a buffer.
 pub trait BufferWriter: Iterator {
     /// Writes the next `n` samples to the buffer.
@@ -331,5 +333,60 @@ impl Iterator for Square {
         } else {
             Some(1.0)
         }
+    }
+}
+
+/// A struct representing a white noise generator.
+///
+/// # Example
+///
+/// ```
+/// use signal::core::generator::Noise;
+/// use signal::core::generator::BufferWriter;
+///
+/// let mut signal = Noise::new(0.5);
+/// let mut buffer = vec![0.0; 3];
+/// signal.write_buffer(buffer.as_mut_slice());
+///
+/// assert_ne!(buffer, vec![0.0, 0.0, 0.0]);
+/// ```
+#[cfg(feature = "random")]
+pub struct Noise {
+    std: f32,
+}
+
+#[cfg(feature = "random")]
+impl Noise {
+    /// Creates a new `Noise` generator with the specified standard deviation.
+    ///
+    /// # Arguments
+    ///
+    /// * `std` - The standard deviation of the noise.
+    ///
+    /// # Returns
+    ///
+    /// A new `Noise` generator.
+    pub fn new(std: f32) -> Noise {
+        Noise { std }
+    }
+}
+
+#[cfg(feature = "random")]
+impl BufferWriter for Noise {}
+
+#[cfg(feature = "random")]
+impl Iterator for Noise {
+    type Item = f32;
+
+    /// Generates the next sample of the noise.
+    ///
+    /// # Returns
+    ///
+    /// The next sample of the noise as an `Option<f32>`.
+    fn next(&mut self) -> Option<f32> {
+        let normal = Normal::new(0.0, self.std as f64).unwrap();
+        let mut rng = rand::thread_rng();
+        let sample = normal.sample(&mut rng) as f32;
+        Some(sample)
     }
 }
