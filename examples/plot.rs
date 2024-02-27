@@ -1,11 +1,11 @@
 use gnuplot::{AxesCommon, Color, Figure};
-use signal::core::generator::{self, BufferWriter};
+use signal::core::generators::{self, BufferWriter};
 
 const SIGNAL_LENGTH: usize = 512;
 const SAMPLE_RATE: usize = 512;
 
 fn main() {
-    let mut signal = generator::Sine::new(1.0, SAMPLE_RATE);
+    let mut signal = generators::Sine::new(1.0, SAMPLE_RATE);
     // let mut signal = generator::Impulse::new();
     let mut buffer = vec![0.0; SIGNAL_LENGTH];
 
