@@ -66,7 +66,7 @@ impl<T> Signal<T> {
     /// ```
     /// use signal::core::signal::Signal;
     ///
-    /// let a = Signal::from_buffer(vec![1, 2, 3]);
+    /// let a = Signal::from_buffer(vec![1, 2, 3, 4, 5]);
     /// let b = a.add_delay(2);
     ///
     /// assert_eq!(b.as_slice(), &[0, 0, 1, 2, 3]);
@@ -77,7 +77,13 @@ impl<T> Signal<T> {
     {
         let buffer = (0..delay)
             .map(|_| Default::default())
-            .chain(self.data.iter().cloned())
+            .chain(
+                self.data
+                    .iter()
+                    .cloned()
+                    .take(self.data.len() - delay)
+                    .collect::<Vec<T>>(),
+            )
             .collect::<Vec<T>>();
         Signal::from_buffer(buffer)
     }
