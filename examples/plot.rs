@@ -11,7 +11,7 @@ fn main() {
 
     signal.write_buffer(buffer.as_mut_slice());
 
-    let idx: Vec<usize> = (0..buffer.len()).map(|i| i * 1000 / 2).collect();
+    let idx: Vec<usize> = (0..buffer.len()).collect();
     let mut fg = Figure::new();
     fg.set_title("Scope plot");
     let axes = fg.axes2d();

@@ -21,9 +21,7 @@ fn main() {
 
     let convolution = sine_signal * delay;
 
-    let idx: Vec<usize> = (0..convolution.as_slice().len())
-        // .map(|i| i * 1000 / 2)
-        .collect();
+    let idx: Vec<usize> = (0..convolution.as_slice().len()).collect();
     let mut fg = Figure::new();
     fg.set_title("Scope plot");
     let axes = fg.axes2d();
